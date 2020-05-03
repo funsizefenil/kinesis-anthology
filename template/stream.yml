@@ -1,16 +1,33 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: |
+Description: Creating a streaming service. 
 
 Parameters:
-
-Metadata:
+  InstanceType:
+    Description: Choose the instance type deplod in the public subnet.
+    Type: String
+    Default: t2.small
 
 Mappings:
-
-Conditions:
+  RegionMap:
+    us-east-1:
+      UbuntuAmi:  ami-07ebfd5b3428b6f4d
+    us-west-2:
+      UbuntuAmi: ami-0d1cd67c26f5fca19
+    us-west-1:
+      UbuntuAmi: ami-03ba3948f6c37a4b0
+    us-east-2:
+      UbuntuAmi: ami-0fc20dd1da406780b
 
 Resources:
-
-Transform:
-
-Outputs:
+  ComputeInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref AWS::Region
+        - UbuntuAmi
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo 'hello'
